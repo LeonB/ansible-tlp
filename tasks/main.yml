@@ -1,0 +1,30 @@
+---
+
+# - name: install tlp ppa
+#   apt_repository: repo='ppa:linrunner/tlp' update_cache=yes
+
+- name: install tlp
+  apt: pkg=tlp
+
+- name: enable RUNTIME_PM_ALL
+  lineinfile: dest=/etc/default/tlp
+    regexp="^RUNTIME_PM_ALL=(0|1)$" line="RUNTIME_PM_ALL=1"
+
+- name: ensure /usr/local/lib/pm-utils/power.d exists
+  file: path=/usr/local/lib/{{item}}
+    owner=root group=root mode=755
+    state=directory
+  with_items:
+    - pm-utils
+    - pm-utils/power.d
+
+- name: install power.d toggle_service script
+  copy: src=toggle_service
+    dest=/usr/local/lib/pm-utils/power.d/toggle_service
+    owner=root group=root mode=755
+
+- name: make power.d control some services
+  file: src=/usr/local/lib/pm-utils/power.d/toggle_service
+    dest=/etc/pm/power.d/{{item}}
+    state=link
+  with_items: disabled_services_on_battery

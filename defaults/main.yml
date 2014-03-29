@@ -1,0 +1,5 @@
+---
+
+disabled_services_on_battery:
+  - bacula-fd
+  - offlineimap

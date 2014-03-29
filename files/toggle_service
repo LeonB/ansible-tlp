@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# This script makes anacron jobs start/stop when a machine gets or loses AC
+# power.
+
+SERVICE_NAME=`basename $0`
+SERVICE_NAME=${0##*/}
+
+case $1 in
+    false)
+        service $SERVICE_NAME start || :
+        ;;
+    true)
+        service $SERVICE_NAME stop || :
+        ;;
+esac
